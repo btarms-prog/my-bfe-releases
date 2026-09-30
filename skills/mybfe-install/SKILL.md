@@ -28,7 +28,7 @@ broken, stop and make a copy of it first.
 | **The records** | `%LOCALAPPDATA%\My BFE\bfe.db` — kept on update and on uninstall |
 | The app's log | `%LOCALAPPDATA%\My BFE\server.log` |
 | Shortcuts | Start menu and (if chosen) desktop: *My B.F.E.*; and one in the Startup folder so it starts with the computer |
-| In the browser | `http://127.0.0.1:8088` — this computer only |
+| The window | From 0.9.2 it opens in **a window of its own** (Edge's app mode — no address bar), else Chrome, else a normal browser tab. Underneath it is `http://127.0.0.1:8088`, this computer only — any browser can open that address too |
 
 `%LOCALAPPDATA%` is usually `C:\Users\<name>\AppData\Local`. Paste it into File
 Explorer's address bar to go there.
@@ -53,7 +53,7 @@ Installing needs no administrator. The installer is about 12.5 MB.
      Microsoft's cloud reputation, so each new version is re-checked. See
      *Blocked by Smart App Control* below.
 3. Choose whether to put an icon on the desktop, then **Install**, then leave
-   **Open My B.F.E. now** ticked and **Finish**. The browser opens on the app.
+   **Open My B.F.E. now** ticked and **Finish**. It opens in its own window (0.9.2 on; earlier versions use a browser tab).
 4. **First-time setup** walks through: the owner (name and a 4–6 digit PIN),
    the place and its animals, feeding, backups, and the phone. Everything after
    the owner can be skipped and done later in Settings.
@@ -202,7 +202,9 @@ sudo cp -a /var/lib/libvirt/clean-win11/swtpm/. /var/lib/libvirt/swtpm/
 **5. The test, each release** — from the clean checkpoint: download from the
 releases page (note any **Edge** download warning and SmartScreen screen);
 switch **Smart App Control ON** for the worst case (Windows Security → App &
-browser control) and record whether it blocks; install; first-time setup;
+browser control) and record whether it blocks; install; it opens in its own
+window (no address bar; note its taskbar icon, and anything Edge shows on its
+first run); first-time setup;
 close the browser and reopen from the Start menu; restart Windows (it should
 start by itself); reinstall over the top (records kept); one-click update
 from the previous version; the phone through Tailscale; uninstall (the
