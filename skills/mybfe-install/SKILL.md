@@ -39,16 +39,19 @@ Installing needs no administrator. The installer is about 12.5 MB.
 
 1. Download the newest installer from
    **https://github.com/btarms-prog/my-bfe-releases/releases** —
-   `MyBFE-Setup-<version>.exe`.
+   `MyBFE-Setup-<version>.exe`. **Edge may warn** that the file is not commonly
+   downloaded; choose to keep it (the menu on the download, then **Keep**).
 2. Run it. It is not signed yet, so Windows warns first:
    - **"Windows protected your PC"** (SmartScreen). Microsoft: for an unsigned
      app the "User must choose "Run anyway" before the app can run." The **Run
      anyway** button appears after clicking **More info** *(the More info step
      is not in Microsoft's docs)*.
-   - **Smart App Control** (Windows 11 only) may block it outright, with no way
-     past for this one app — Microsoft: "There is currently no way to bypass
-     Smart App Control protection for individual apps." It is on only on some
-     freshly installed PCs. See *Blocked by Smart App Control* below.
+   - **Smart App Control** (Windows 11 only) could block it outright, with no
+     way past for this one app — Microsoft: "There is currently no way to
+     bypass Smart App Control protection for individual apps." **0.9.0 was NOT
+     blocked with it switched ON** (tested 2026-09-30); its decisions rest on
+     Microsoft's cloud reputation, so each new version is re-checked. See
+     *Blocked by Smart App Control* below.
 3. Choose whether to put an icon on the desktop, then **Install**, then leave
    **Open My B.F.E. now** ticked and **Finish**. The browser opens on the app.
 4. **First-time setup** walks through: the owner (name and a 4–6 digit PIN),
@@ -129,11 +132,17 @@ switched on (`grep -cE '(vmx|svm)' /proc/cpuinfo` > 0), 8 GB+ RAM (16 is
 comfortable) and **about 70 GB free** (`df -h /`). A nearly full disk makes
 Ubuntu itself misbehave — do not start below ~70 GB.
 
-**1. Windows 11 itself** — Microsoft's free *Windows 11 Enterprise evaluation*:
-https://www.microsoft.com/en-us/evalcenter/evaluate-windows-11-enterprise —
-"90-day evaluation"; "A product key is not required". Choose the **ISO (x64)**.
-Microsoft: downloading "could take a few hours". (Microsoft's ready-made
-developer VMs are no longer offered.)
+**1. Windows 11 itself** — either of Microsoft's own downloads:
+- **The ordinary Windows 11 ISO** (used for the 2026-09-30 test — no form):
+  https://www.microsoft.com/software-download/windows11 → *Download Windows 11
+  Disk Image (ISO) for x64 devices*. During setup choose **I don't have a
+  product key**; it installs unactivated, which is fine for testing.
+- **Windows 11 Enterprise evaluation**:
+  https://www.microsoft.com/en-us/evalcenter/evaluate-windows-11-enterprise —
+  "90-day evaluation"; "A product key is not required" — but its download page
+  asks for business details in a sign-up form first.
+
+(Microsoft's ready-made developer VMs are no longer offered.)
 
 Windows 11 needs (Microsoft's spec page): 2+ cores, "4 gigabytes (GB)" RAM,
 "64 GB or larger storage", "UEFI, Secure Boot capable", "Trusted Platform
@@ -159,8 +168,11 @@ vendor's docs — check each screen against them)*:
 4. **Overview → Firmware**: a **UEFI** choice; if there is a list, pick the one
    with `secboot` or `ms` in its name (Secure Boot). Check there is a **TPM**
    device, version **2.0** — if not, **Add Hardware → TPM**, Emulated, 2.0.
-5. **Begin Installation**. Click into the window and press a key if it says
-   "Press any key to boot from CD or DVD".
+5. **Begin Installation**. Click into the window and press a key as soon as
+   it says "Press any key to boot from CD or DVD" — it only waits a few
+   seconds. **Missed it and landed in a blue firmware menu?** Choose **Boot
+   Manager → UEFI QEMU DVD-ROM**, then tap the spacebar straight away *(what
+   worked on 2026-09-30; not in any vendor's docs)*.
 6. Windows setup may insist on a Microsoft account. Microsoft's evaluation page
    says Enterprise needs one; no Microsoft document describes a way round it.
    Use one, or a throwaway one.
@@ -168,7 +180,35 @@ vendor's docs — check each screen against them)*:
 Networking works out of the box (libvirt's default NAT network), so inside the
 VM just open Edge, go to the releases page and download the installer.
 
-**4. Clean up afterwards** — the disk image is the big part. In Virtual
+**4. Save a clean checkpoint** — once Windows is installed and **fully shut
+down**, before installing My B.F.E., copy the machine's three parts so every
+new version can be tested on a fresh Windows. (Copying files rather than
+virt-manager snapshots, which were not reliable with UEFI + TPM on Ubuntu
+24.04 — what worked on 2026-09-30, not vendor documentation.) For a VM named
+`win11-bfe`:
+```bash
+sudo mkdir -p /var/lib/libvirt/clean-win11/swtpm
+sudo cp --sparse=always /var/lib/libvirt/images/win11-bfe.qcow2 /var/lib/libvirt/clean-win11/
+sudo cp /var/lib/libvirt/qemu/nvram/win11-bfe_VARS.fd /var/lib/libvirt/clean-win11/
+sudo cp -a /var/lib/libvirt/swtpm/. /var/lib/libvirt/clean-win11/swtpm/
+```
+To go back to it, with the VM shut off:
+```bash
+sudo cp --sparse=always /var/lib/libvirt/clean-win11/win11-bfe.qcow2 /var/lib/libvirt/images/
+sudo cp /var/lib/libvirt/clean-win11/win11-bfe_VARS.fd /var/lib/libvirt/qemu/nvram/
+sudo cp -a /var/lib/libvirt/clean-win11/swtpm/. /var/lib/libvirt/swtpm/
+```
+
+**5. The test, each release** — from the clean checkpoint: download from the
+releases page (note any **Edge** download warning and SmartScreen screen);
+switch **Smart App Control ON** for the worst case (Windows Security → App &
+browser control) and record whether it blocks; install; first-time setup;
+close the browser and reopen from the Start menu; restart Windows (it should
+start by itself); reinstall over the top (records kept); one-click update
+from the previous version; the phone through Tailscale; uninstall (the
+records must stay in `%LOCALAPPDATA%\My BFE`).
+
+**6. Clean up afterwards** — the disk image is the big part. In Virtual
 Machine Manager: select the VM → **Delete**, and tick **Delete associated
 storage files**. Then `df -h /` to confirm the space came back.
 
