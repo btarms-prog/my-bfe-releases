@@ -48,10 +48,12 @@ Installing needs no administrator. The installer is about 12.5 MB.
      is not in Microsoft's docs)*.
    - **Smart App Control** (Windows 11 only) could block it outright, with no
      way past for this one app — Microsoft: "There is currently no way to
-     bypass Smart App Control protection for individual apps." **0.9.0 was NOT
-     blocked with it switched ON** (tested 2026-09-30); its decisions rest on
-     Microsoft's cloud reputation, so each new version is re-checked. See
-     *Blocked by Smart App Control* below.
+     bypass Smart App Control protection for individual apps." **Not yet
+     confirmed either way:** on 2026-09-30 it seemed not to block 0.9.0 when
+     switched ON, but it was later found back in *Evaluation* — so whether it
+     was really on is uncertain. Its decisions rest on Microsoft's cloud
+     reputation, so check it on every new version: note the setting before and
+     after. See *Blocked by Smart App Control* below.
 3. Choose whether to put an icon on the desktop, then **Install**, then leave
    **Open My B.F.E. now** ticked and **Finish**. It opens in its own window (0.9.2 on; earlier versions use a browser tab).
 4. **First-time setup** walks through: the owner (name and a 4–6 digit PIN),
@@ -82,6 +84,26 @@ replaces the program, and starts it again. The records are untouched.
 **Uninstall** — Settings → Apps → *My B.F.E.* → Uninstall. **The records stay**
 in `%LOCALAPPDATA%\My BFE`, so reinstalling later picks them back up. To remove
 them too, delete that folder by hand — only after a backup.
+
+**No new version found, when there is one:**
+1. In the browser, open `http://127.0.0.1:8088/api/update?force=1` (signed in
+   as an owner) and read it: `latest` is the newest version it could find,
+   `error` says why it could not look.
+2. Check the app's own secure connection from the program folder in Command
+   Prompt — it should print `200`:
+   ```
+   cd /d "%LOCALAPPDATA%\Programs\My BFE"
+   python\python.exe -c "from bfe import net; print(net.urlopen('https://api.github.com/repos/btarms-prog/my-bfe-releases/releases/latest').status)"
+   ```
+   `CERTIFICATE_VERIFY_FAILED` means a version before 0.9.3 (it could not check
+   certificates on a fresh Windows) — install 0.9.3 or newer by hand.
+   `HTTP Error 403: rate limit exceeded` is GitHub's hourly limit; from 0.9.3
+   the app then reads the releases page instead.
+3. The reason for any failed check is also in `server.log`
+   (`update check failed: …`).
+
+**Versions 0.9.0–0.9.2 cannot update themselves** — install 0.9.3 or newer by
+hand once, over the top; the records are kept.
 
 **Updates** — owners see *"A new version of My B.F.E. is ready"* across the
 top, with **Update**. It downloads the new installer, checks it against the

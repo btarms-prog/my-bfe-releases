@@ -18,9 +18,12 @@ The installer is not signed yet, so the first time you run it:
 
 - **Edge** may say the download isn't commonly downloaded — choose to **Keep** it.
 - **"Windows protected your PC"** — click **More info**, then **Run anyway**.
-- **Smart App Control** (some new Windows 11 PCs) could block it. It did not
-  block 0.9.0, even switched fully on; if it ever does, please tell us — it
-  means the installer needs signing.
+- **Smart App Control** (some new Windows 11 PCs) could block it. Not yet
+  confirmed either way; if it does, please tell us — it means the installer
+  needs signing.
+
+**Have 0.9.0, 0.9.1 or 0.9.2?** Those cannot update themselves — install 0.9.3
+or newer by hand, over the top. Your records are kept.
 
 It installs for you only (no administrator), in about a minute, and opens in
 your web browser. First-time setup walks you through the rest.
