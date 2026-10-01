@@ -78,6 +78,18 @@ python\python.exe -m bfe.launch            & rem start if needed, open the brows
 python\python.exe -m bfe.launch --stop     & rem stop it
 ```
 
+**Signed in without a PIN, or unexpectedly signed out** — read the sign-in
+lines in `server.log` (from 0.9.6): `signed in: P001 with PIN on Edge on
+Windows (kept 30 days)`, `sign-in refused: …`, `signed out: P001`. A sign-in
+with no `signed in` line before it means a session survived — note the times
+and what was clicked. "Keep me signed in" (ticked by default) keeps a computer
+signed in for 30 days, through restarts, by design; the app's own **Sign out**
+must always lead to the PIN.
+
+**Opens in the phone layout on a computer** — 0.9.2–0.9.4 mistook their own
+window for a phone; fixed in 0.9.5. **Full app →** at the bottom reaches the
+computer layout meanwhile.
+
 **Reinstall** — safe: run the installer again. It stops the running app,
 replaces the program, and starts it again. The records are untouched.
 
